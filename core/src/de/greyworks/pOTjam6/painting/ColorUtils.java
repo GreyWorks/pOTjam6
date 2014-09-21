@@ -1,5 +1,10 @@
 package de.greyworks.pOTjam6.painting;
 
+import java.util.ArrayList;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+
 
 public class ColorUtils {
 
@@ -35,6 +40,88 @@ public class ColorUtils {
 		if (diff != 0)
 			return Math.sqrt(diff);
 		return 0;
+	}
+	
+	public static ArrayList<Color> kMeans(Pixmap img, int num, int iterations) {
+		int[] cols = new int[num];
+		int[][] zuordnung = new int[img.getWidth()][img.getHeight()];
+		double currDiff;
+
+		// vergabe
+		for (int i = 0; i < cols.length; i++) {
+			cols[i] = ColorUtils.getRandomColor();
+		}
+
+		// iterations
+		for (int i = 0; i < iterations; i++) {
+
+			// Zuordnung
+			// init max values
+			double[][] minDiffs = new double[img.getWidth()][img.getHeight()];
+			for (int j = 0; j < img.getWidth() * img.getHeight(); j++) {
+				int x = j % img.getWidth();
+				int y = (int) Math.floor(j / img.getWidth());
+				minDiffs[x][y] = Double.MAX_VALUE;
+			}
+
+			for (int c = 0; c < cols.length; c++) {
+				for (int x = 0; x < img.getWidth(); x++) {
+					for (int y = 0; y < img.getHeight(); y++) {
+						currDiff = ColorUtils.calculateHexDiff(img.getPixel(x, y), cols[c]);
+						if (currDiff < minDiffs[x][y]) {
+							minDiffs[x][y] = currDiff;
+							zuordnung[x][y] = c;
+						}
+					}
+				}
+			}
+
+			// Neuzuordnung
+			int[][] recalc = new int[cols.length][5];
+			for (int x = 0; x < img.getWidth(); x++) {
+				for (int y = 0; y < img.getHeight(); y++) {
+					int c = zuordnung[x][y];
+					int[] cSplit = ColorUtils.channelsFromInt(img
+							.getPixel(x, y));
+					recalc[c][0] += cSplit[0];
+					recalc[c][1] += cSplit[1];
+					recalc[c][2] += cSplit[2];
+					recalc[c][3] += cSplit[3];
+					recalc[c][4]++;
+				}
+			}
+			for (int c = 0; c < cols.length; c++) {
+				if (recalc[c][4] != 0) {
+					recalc[c][0] = recalc[c][0] / recalc[c][4];
+					recalc[c][1] = recalc[c][1] / recalc[c][4];
+					recalc[c][2] = recalc[c][2] / recalc[c][4];
+					recalc[c][3] = recalc[c][3] / recalc[c][4];
+					cols[c] = ColorUtils.intFromChannels(new int[] {
+							recalc[c][0], recalc[c][1], recalc[c][2],
+							recalc[c][3] });
+				} else {
+					cols[c] = ColorUtils.getRandomColor();
+				}
+			}
+		}
+
+		ArrayList<Color> colors = new ArrayList<Color>();
+		for (int c : cols) {
+			colors.add(new Color(c));
+		}
+		return colors;
+	}
+	
+	public static double calculateDifference(Pixmap map, Pixmap target) {
+		double diff = 0;
+		for (int x = 0; x < target.getWidth(); x += 2) {
+			for (int y = 0; y < target.getHeight(); y += 2) {
+				diff += ColorUtils.calculateHexDiff(map.getPixel(x, y),
+						target.getPixel(x, y));
+			}
+		}
+
+		return diff;
 	}
 
 }

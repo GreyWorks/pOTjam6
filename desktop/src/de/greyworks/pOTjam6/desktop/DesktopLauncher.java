@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		config.title = "The Art Of Brute Force";
 		config.width = 1280;
 		config.height = 800;
-		config.foregroundFPS = 90;
+		config.foregroundFPS = 30;
 		new LwjglApplication(new BruteForce(), config);
 	}
 }
