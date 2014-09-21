@@ -3,7 +3,6 @@ package de.greyworks.pOTjam6.painting;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -17,7 +16,7 @@ public class SingleThreadPainterManager implements PainterManager {
 	Texture tex = new Texture(canvas);
 	Painter p = new RandomPainter();
 	
-	ArrayList<Color> colors = new ArrayList<Color>();
+	ArrayList<Integer> colors = new ArrayList<Integer>();
 	double lastDiff = Double.MAX_VALUE;
 
 	boolean paint = false;

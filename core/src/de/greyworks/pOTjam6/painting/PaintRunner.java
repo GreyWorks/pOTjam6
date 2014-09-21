@@ -1,21 +1,19 @@
 package de.greyworks.pOTjam6.painting;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 
 import de.greyworks.pOTjam6.painting.painter.Painter;
 
 public class PaintRunner implements Runnable {
 	Pixmap canvas, target;
-	ArrayList<Color> colors;
+	ArrayList<Integer> colors;
 	Painter painter;
 	public boolean done = false;
 	public double diff = Double.MAX_VALUE;
 
-	public PaintRunner(Pixmap canvas, Pixmap target, ArrayList<Color> colors,
+	public PaintRunner(Pixmap canvas, Pixmap target, ArrayList<Integer> colors,
 			Painter painter) {
 		this.canvas = new Pixmap(canvas.getWidth(), canvas.getHeight(), canvas.getFormat());
 		this.canvas.drawPixmap(canvas, 0, 0);

@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import de.greyworks.pOTjam6.painting.MultiThreadPainterManager;
-import de.greyworks.pOTjam6.painting.SingleThreadPainterManager;
 
 public class HomeScreen implements Screen {
 	Texture bg = new Texture("pika.jpg");
 	MultiThreadPainterManager pMan = new MultiThreadPainterManager("girl0.jpg",
-			4, 8);
+			4, 24);
 //	SingleThreadPainterManager pMan = new SingleThreadPainterManager();
 
 	public HomeScreen() {

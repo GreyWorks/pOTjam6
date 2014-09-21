@@ -3,8 +3,6 @@ package de.greyworks.pOTjam6.painting;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.Gdx;
@@ -14,13 +12,12 @@ import com.badlogic.gdx.graphics.Texture;
 
 import de.greyworks.pOTjam6.painting.painter.Painter;
 import de.greyworks.pOTjam6.painting.painter.RandomColorPickPainter;
-import de.greyworks.pOTjam6.painting.painter.RandomPainter;
 
 public class MultiThreadPainterManager implements PainterManager {
 	Pixmap canvas = new Pixmap(400, 600, Pixmap.Format.RGBA8888);
 	Pixmap target = new Pixmap(400, 600, Pixmap.Format.RGBA8888);
 	Texture tex = new Texture(canvas);
-	ArrayList<Color> colors = new ArrayList<Color>();
+	ArrayList<Integer> colors = new ArrayList<Integer>();
 	double lastDiff = Double.MAX_VALUE;
 	Painter p = new RandomColorPickPainter();
 	boolean paint = false;
@@ -33,7 +30,7 @@ public class MultiThreadPainterManager implements PainterManager {
 		canvas.setColor(Color.WHITE);
 		canvas.fill();
 
-		colors = ColorUtils.kMeans(target, numCol, 50);
+		colors = ColorUtils.kMeans(target, numCol, 32);
 	}
 
 	@Override
@@ -62,7 +59,7 @@ public class MultiThreadPainterManager implements PainterManager {
 
 		@Override
 		public void run() {
-			int concThreads = 4;
+			int concThreads = 9;
 			ExecutorService exec;
 			ArrayList<PaintRunner> runners = new ArrayList<PaintRunner>();
 			while (paint) {

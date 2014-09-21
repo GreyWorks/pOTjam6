@@ -2,7 +2,6 @@ package de.greyworks.pOTjam6.painting;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 
 
@@ -42,7 +41,7 @@ public class ColorUtils {
 		return 0;
 	}
 	
-	public static ArrayList<Color> kMeans(Pixmap img, int num, int iterations) {
+	public static ArrayList<Integer> kMeans(Pixmap img, int num, int iterations) {
 		int[] cols = new int[num];
 		int[][] zuordnung = new int[img.getWidth()][img.getHeight()];
 		double currDiff;
@@ -105,9 +104,9 @@ public class ColorUtils {
 			}
 		}
 
-		ArrayList<Color> colors = new ArrayList<Color>();
+		ArrayList<Integer> colors = new ArrayList<Integer>();
 		for (int c : cols) {
-			colors.add(new Color(c));
+			colors.add(c);
 		}
 		return colors;
 	}
