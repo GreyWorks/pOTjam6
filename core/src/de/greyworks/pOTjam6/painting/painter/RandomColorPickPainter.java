@@ -30,4 +30,9 @@ public class RandomColorPickPainter implements Painter {
 		return canvas;
 	}
 
+	@Override
+	public String getName() {
+		return "Zufällige Punkte mit erkannten Farben";
+	}
+
 }

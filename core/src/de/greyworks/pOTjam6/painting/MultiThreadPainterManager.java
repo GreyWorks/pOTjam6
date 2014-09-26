@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import de.greyworks.pOTjam6.painting.painter.Painter;
 import de.greyworks.pOTjam6.painting.painter.RandomColorPickPainter;
+import de.greyworks.pOTjam6.painting.painter.RandomPainter;
 
 public class MultiThreadPainterManager implements PainterManager {
 	Pixmap canvas = new Pixmap(400, 600, Pixmap.Format.RGBA8888);
@@ -19,18 +20,23 @@ public class MultiThreadPainterManager implements PainterManager {
 	Texture tex = new Texture(canvas);
 	ArrayList<Integer> colors = new ArrayList<Integer>();
 	double lastDiff = Double.MAX_VALUE;
-	Painter p = new RandomColorPickPainter();
+	double firstDiff = -1.0;
+	ArrayList<Painter> painters = new ArrayList<Painter>();
+	int currPainter = 1;
 	boolean paint = false;
 
 	public MultiThreadPainterManager(String fileName, int threads, int numCol) {
 		Pixmap input = new Pixmap(Gdx.files.internal(fileName));
 		target.drawPixmap(input, 0, 0);
 		input.dispose();
-		
-		canvas.setColor(Color.WHITE);
-		canvas.fill();
+		Pixmap bgTex = new Pixmap(Gdx.files.internal("canvas.png"));
+		canvas.drawPixmap(bgTex, 0, 0);
 
 		colors = ColorUtils.kMeans(target, numCol, 32);
+		
+		painters.add(new RandomPainter());
+		painters.add(new RandomColorPickPainter());
+		
 	}
 
 	@Override
@@ -55,6 +61,24 @@ public class MultiThreadPainterManager implements PainterManager {
 		return tex;
 	}
 
+	public double getDiff() {
+		return (lastDiff / firstDiff) * 100;
+	}
+	
+	public ArrayList<Painter> getPainters() {
+		return painters;
+	}
+	
+	public int getPainterIdx() {
+		return currPainter;
+	}
+	
+	public void setPainterIdx(int idx) {
+		if(idx < painters.size() && idx > -1) {
+			currPainter = idx;
+		}
+	} 
+
 	private Runnable runner = new Runnable() {
 
 		@Override
@@ -65,8 +89,7 @@ public class MultiThreadPainterManager implements PainterManager {
 			while (paint) {
 				exec = Executors.newCachedThreadPool();
 				for (int i = 0; i < concThreads; i++) {
-					PaintRunner r = new PaintRunner(canvas, target, colors,
-							p);
+					PaintRunner r = new PaintRunner(canvas, target, colors, painters.get(currPainter));
 					runners.add(r);
 					exec.execute(r);
 				}
@@ -89,6 +112,9 @@ public class MultiThreadPainterManager implements PainterManager {
 				if (smRun.diff < lastDiff) {
 					canvas.drawPixmap(smRun.canvas, 0, 0);
 					lastDiff = smRun.diff;
+					if(firstDiff < 0) {
+						firstDiff = lastDiff;
+					}
 				}
 
 				for (PaintRunner r : runners) {
